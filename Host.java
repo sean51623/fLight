@@ -1,8 +1,8 @@
 public class Host {
-	ip;
-	port;
+	String ip;
+	int port;
 	public Host() {}
-	public Host(ip, port) {
+	public Host(String ip, int port) {
 		this.ip = ip;
 		this.port = port;
 	}
