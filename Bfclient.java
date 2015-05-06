@@ -47,7 +47,7 @@ public class Bfclient {
 		System.out.println("Hello World!");
 		
 		try {
-			Scanner sc = new Scanner(System.in)
+			Scanner sc = new Scanner(System.in);
 			String head = "";
 			String rest = "";
 			ArrayList<String> argument = new ArrayList<>();
