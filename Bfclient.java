@@ -4,47 +4,24 @@ import java.net.*;
 
 public class Bfclient {
 
-	timeout;
-	selfPort;
-	HashMap<Host, Integer> table;
+	int timeout;
+	int selfPort;
 	
 	public Bfclient() {}
 	
 	public static void main(String[] args) throws Exception{
 		String readFile = args[0];
-		parseFile(readFile);
+		Bfclient_host bh = new Bfclient_host(readFile);
 		
-		new Thread().start();
-		new Thread().start();
+		new Thread(new Bfclient_listener(selfPort)).start();
+		new Thread(new Bfclient_sender(timeout)).start();
 		
 		Bfclient bfc = new Bfclient();
 		bfc.startConsole();
 	}
 	
-	public void parseFile(String fileName) throws IOException{
-		try {
-			FileReader f1 = new FileReader(fileName);
-			BufferedReader b1 = new BufferedReader(b1);
-			String line = "";
-			String[2] temp = new String[2];
-			String[2] temp2 = new String[2];
-			
-			line = b1.readLine();
-			temp = line.split(" ");
-			while(b1.ready()) {
-				line = b1.readLine();
-				temp = line.split(" ");
-				temp2 = temp[0].split(":");
-				table.put(new Host(temp2[0], Integer.parseInt(temp2[1])), Float.parseFloat(temp[1]));
-			}
-		}
-		catch(Exception e) {
-			System.err.println("Error: " + e.getMessage());
-		}
-	}
-	
 	public void startConsole(){
-		System.out.println("Hello World!");
+		System.out.println("Welcome to Bfclient!");
 		
 		try {
 			Scanner sc = new Scanner(System.in);
@@ -62,13 +39,13 @@ public class Bfclient {
 				}
 				
 				if (head.equals("linkdown")) {
-					processLinkDown(argument);
+					processLinkDown(bh, argument);
 				}
 				else if (head.equals("linkup")) {
-					processLinkUp(argument);
+					processLinkUp(bh, argument);
 				}
 				else if (head.equals("changecost")) {
-					processChangeCost(argument);
+					processChangeCost(bh, argument);
 				}
 				else if (head.equals("showrt")) {
 					processShowRT();
@@ -90,14 +67,17 @@ public class Bfclient {
 	}
 
 	
-	void processLinkDown() {}
+	void processLinkDown(Bfclient_host bh, ArrayList<String> argument) {
+		
+	}
 	
-	void processLinkUp() {}
+	void processLinkUp(Bfclient_host bh, ArrayList<String> argument) {}
 	
-	void processChangeCost() {}
+	void processChangeCost(Bfclient_host bh, ArrayList<String> argument) {}
 	
 	void processShowRT(){
-		System.out.println("Current time: "+);
+		System.out.println("Current time: "+(long)(System.currentTimeMillis()/1000));
+		bh.showRouteTable();
 	}
 	
 	void processClose(){
