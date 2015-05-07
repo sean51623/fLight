@@ -1,9 +1,15 @@
+import java.net.*;
+import java.io.*;
+import java.util.*;
+
 public class Host {
-	String ip;
+	InetAddress ip;
+	DatagramSocket socket;
 	int port;
 	public Host() {}
-	public Host(String ip, int port) {
+	public Host(InetAddress ip, int port, DatagramSocket socket) {
 		this.ip = ip;
 		this.port = port;
+		this.socket = socket;
 	}
 }
