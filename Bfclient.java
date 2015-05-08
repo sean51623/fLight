@@ -4,17 +4,15 @@ import java.net.*;
 
 public class Bfclient {
 
-	int timeout;
-	int selfPort;
-	
 	public Bfclient() {}
 	
 	public static void main(String[] args) throws Exception{
 		String readFile = args[0];
-		Bfclient_host bh = new Bfclient_host(readFile);
+		InetAddress hostAddr = InetAddress.getLocalHost();
+		Bfclient_host bh = new Bfclient_host(readFile, hostAddr);
 		
-		new Thread(new Bfclient_listener(selfPort)).start();
-		new Thread(new Bfclient_sender(timeout)).start();
+		new Thread(new Bfclient_listener(bh)).start();
+		new Thread(new Bfclient_sender(bh)).start();
 		
 		Bfclient bfc = new Bfclient();
 		bfc.startConsole();
@@ -26,26 +24,19 @@ public class Bfclient {
 		try {
 			Scanner sc = new Scanner(System.in);
 			String head = "";
-			String rest = "";
-			ArrayList<String> argument = new ArrayList<>();
 			while(true){
-				String cmd = sc.nextLine();
-				StringTokenizer st = new StringTokenizer(cmd);
-				head = st.nextToken();
-				head = head.toLowerCase();
-				while(st.hasMoreTokens()) {
-					rest = st.nextToken();
-					argument.add(rest);
-				}
+				String line = sc.nextLine();
+				String[] splitLine = line.split(" ");
+				head = splitLine[0].toLowerCase();
 				
 				if (head.equals("linkdown")) {
-					processLinkDown(bh, argument);
+					processLinkDown(bh, splitLine);
 				}
 				else if (head.equals("linkup")) {
-					processLinkUp(bh, argument);
+					processLinkUp(bh, splitLine);
 				}
 				else if (head.equals("changecost")) {
-					processChangeCost(bh, argument);
+					processChangeCost(bh, splitLine);
 				}
 				else if (head.equals("showrt")) {
 					processShowRT();
@@ -62,18 +53,38 @@ public class Bfclient {
 			}
 		}
 		catch (Exception e) {
-			System.err.println("Error: "+e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
 	
-	void processLinkDown(Bfclient_host bh, ArrayList<String> argument) {
-		
+	void processLinkDown(Bfclient_host bh, String[] splitLine) {
+		if (splitLine.length!=3) {
+			System.out.println("Invalid command!");
+		}
+		else {
+			foreach(Neighbor nb: bh.neighbor) {
+				if (nb.ip.equals(splitLine[1]) && nb.port.equals(splitLine[2])) {
+					nb.distance = Float.MAX_VALUE;
+				}
+			}
+		}
 	}
 	
-	void processLinkUp(Bfclient_host bh, ArrayList<String> argument) {}
+	void processLinkUp(Bfclient_host bh, String[] splitLine) {}
 	
-	void processChangeCost(Bfclient_host bh, ArrayList<String> argument) {}
+	void processChangeCost(Bfclient_host bh, String[] splitLine) {
+		if (splitLine.length!=4) {
+			System.out.println("Invalid command!");
+		}
+		else {
+			foreach(Neighbor nb: bh.neighbor) {
+				if (nb.ip.equals(splitLine[1]) && nb.port.equals(splitLine[2])) {
+					nb.distance = Float.parseFloat(splitLine[3]);
+				}
+			}
+		}
+	}
 	
 	void processShowRT(){
 		System.out.println("Current time: "+(long)(System.currentTimeMillis()/1000));
