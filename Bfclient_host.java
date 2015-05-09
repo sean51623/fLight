@@ -8,6 +8,7 @@ public class Bfclient_host {
 	int timeout;
 	int port;
 	ArrayList<Neighbor> neighbor;
+	HashMap<String, Path> routeTable;
 	DatagramSocket socket;
 	
 	
@@ -40,7 +41,13 @@ public class Bfclient_host {
 		}
 	}
 	
-	public void printRouteTable() {
+	public void showRouteTable() {
+		foreach(Neighbor nb: neighbor) {
+			
+		}
+	}
+	
+	public void processPacket() {
 	
 	}
 }
