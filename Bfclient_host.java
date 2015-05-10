@@ -20,10 +20,8 @@ public class Bfclient_host {
 		try{
 			neighbor = new ArrayList<>();
 			routeTable = new HashMap<String, HashMap<String, Path>>();
-			parseFile(fileName);
 			this.ip = hostAddr;
-			String asd = ip.toString()+'\t'+Integer.toString(port);
-			System.out.println(asd);
+			parseFile(fileName);
 			socket = new DatagramSocket(port);
 			liveNode = new ArrayList<>();
 			liveNode.add(self);
@@ -51,11 +49,16 @@ public class Bfclient_host {
 				String[] temp2 = temp[0].split(":");
 				//System.out.println(temp2[0]+temp2[1]+temp[1]);
 				neighbor.add(new Neighbor(temp2[0], Integer.parseInt(temp2[1]), Float.parseFloat(temp[1])));
+				temp2[0] = localHostTraslate(temp2[0]);
 				String qwe = temp2[0]+'\t'+temp2[1];
-				this.self = qwe;
-				System.out.println(qwe);
+				
+				//System.out.println(qwe);
 				selfMap.put(qwe, new Path(qwe,Float.parseFloat(temp[1])));
 			}
+			String asd = ip.toString()+'\t'+Integer.toString(port);
+			this.self = asd;
+			//System.out.println(asd);
+			selfMap.put(self ,new Path(self,0));
 			
 			routeTable.put(self,selfMap);
 		}
@@ -88,13 +91,44 @@ public class Bfclient_host {
 		}
 		routeTable.put(self,selfMap);
 	}
+	/*
+	public void dvupdate2() {
+		selfMap = routeTable.get(self);
+		//System.out.println("WWW");
+		for (Map.Entry<String, Path> et: selfMap) {
+			//System.out.println("ZZZ");
+			String n = et.getKey();
+			Path p = et.getValue();
+			if (!selfMap.containsKey(n)) {
+				liveNode.add(n);
+				selfMap.put(n, new Path(src, p.totalDist+selfMap.get(src).totalDist));
+			}
+			else {
+				if (n==null) {
+					selfMap.get(n).nexthop = null;
+				}
+				else if (selfMap.get(src).totalDist + p.totalDist < selfMap.get(n).totalDist) {
+					selfMap.put(n, new Path(src, p.totalDist+selfMap.get(src).totalDist));
+				}
+			}
+		}
+		routeTable.put(self,selfMap);
+	}
+	*/
 	
 	public void pldown(String[] linkDownHost) {
-		String ldh = linkDownHost[0]+'\t'+linkDownHost[1];
+		String ldh = localHostTraslate(linkDownHost[1])+'\t'+linkDownHost[2];
 		selfMap = routeTable.get(self);
+		
+		
+		//for (Map.Entry<String, Path> et : selfMap.entrySet()){
+		//	System.out.println(et.getKey());
+		//}
+		//System.out.println(ldh);
 		selfMap.get(ldh).nexthop = null;
 		
 		routeTable.put(self,selfMap);
+		//dvupdate2();
 		byte[] toSend = pack(ip,port,selfMap);
 		for (Neighbor nb: this.neighbor) {
 			try {
@@ -108,11 +142,12 @@ public class Bfclient_host {
 	}
 	
 	public void plup(String[] linkUpHost) {
-		String ldu = linkUpHost[0]+'\t'+linkUpHost[1];;
+		String ldu = localHostTraslate(linkUpHost[1])+'\t'+linkUpHost[2];;
 		selfMap = routeTable.get(self);
 		selfMap.get(ldu).nexthop = ldu;
 		
 		routeTable.put(self,selfMap);
+		//dvupdate2();
 		byte[] toSend = pack(ip,port,selfMap);
 		for (Neighbor nb: this.neighbor) {
 			try{
@@ -126,11 +161,12 @@ public class Bfclient_host {
 	}
 	
 	public void pcc(String[] changeCost) {
-		String cc = changeCost[0]+'\t'+changeCost[1];
+		String cc = localHostTraslate(changeCost[1])+'\t'+changeCost[2];
 		selfMap = routeTable.get(self);
-		selfMap.get(cc).totalDist = Float.parseFloat(changeCost[2]);
+		selfMap.get(cc).totalDist = Float.parseFloat(changeCost[3]);
 		
 		routeTable.put(self,selfMap);
+		//dvupdate2();
 		byte[] toSend = pack(ip,port,selfMap);
 		for (Neighbor nb: this.neighbor) {
 			try{
@@ -213,4 +249,12 @@ public class Bfclient_host {
 		}
 		return pck;
 	}
+	String localHostTraslate(String addr) {
+		if (addr.equals("127.0.0.1")) {
+			return new String("/169.254.137.248");
+		}
+		else return addr;
+	}
 }
+
+// linkdown /169.254.137.248 4116

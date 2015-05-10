@@ -12,7 +12,7 @@ public class Bfclient {
 		String readFile = args[0];
 		String wer = InetAddress.getLocalHost().getHostAddress();
 		InetAddress hostAddr = InetAddress.getByName(wer);
-		System.out.println(hostAddr);
+		//System.out.println(hostAddr);
 		Bfclient_host bh = new Bfclient_host(readFile, hostAddr);
 		
 		new Thread(new Bfclient_listener(bh)).start();
@@ -83,4 +83,5 @@ public class Bfclient {
 	}
 	
 	//void processTransfer(){}
+
 }

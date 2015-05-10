@@ -12,6 +12,8 @@ public class TestHost {
 		socket = new DatagramSocket(port);
 		hostAddr = InetAddress.getLocalHost();
 		Host h1 = new Host(hostAddr, port, socket);
+		String qwe = hostAddr.getHostAddress();
+		System.out.println(qwe);
 		int port2 = Integer.parseInt(args[1]);
 		
 		new Thread(new TestRC(h1)).start();
