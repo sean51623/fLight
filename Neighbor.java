@@ -3,16 +3,20 @@ import java.io.*;
 import java.util.*;
 
 public class Neighbor {
-	String ip;
+	InetAddress ip;
 	int port;
 	float distance;
 	long lastUpdateTime;
-	HashMap<String, Path> distanceVector;
 	
 	public Neighbor(String ip, int port, float distance) {
-		this.ip = ip;
-		this.port = port;
-		this.distance = distance;
-		this.lastUpdateTime = -1;
+		try{
+			this.ip = InetAddress.getByName(ip);
+			this.port = port;
+			this.distance = distance;
+			this.lastUpdateTime = -1;
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

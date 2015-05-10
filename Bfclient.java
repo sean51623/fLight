@@ -3,18 +3,22 @@ import java.io.*;
 import java.net.*;
 
 public class Bfclient {
-
-	public Bfclient() {}
+	Bfclient_host bh;
+	public Bfclient(Bfclient_host host) {
+		this.bh = host;
+	}
 	
 	public static void main(String[] args) throws Exception{
 		String readFile = args[0];
-		InetAddress hostAddr = InetAddress.getLocalHost();
+		String wer = InetAddress.getLocalHost().getHostAddress();
+		InetAddress hostAddr = InetAddress.getByName(wer);
+		System.out.println(hostAddr);
 		Bfclient_host bh = new Bfclient_host(readFile, hostAddr);
 		
 		new Thread(new Bfclient_listener(bh)).start();
 		new Thread(new Bfclient_sender(bh)).start();
 		
-		Bfclient bfc = new Bfclient();
+		Bfclient bfc = new Bfclient(bh);
 		bfc.startConsole();
 	}
 	
@@ -45,10 +49,10 @@ public class Bfclient {
 					processClose();
 				}
 				else if (head.equals("transfer")) {
-					processTransfer();
+					//processTransfer();
 				}
 				else {
-					System.out.println("Invalid command.")
+					System.out.println("Invalid command.");
 				}
 			}
 		}
@@ -56,34 +60,17 @@ public class Bfclient {
 			e.printStackTrace();
 		}
 	}
-
 	
 	void processLinkDown(Bfclient_host bh, String[] splitLine) {
-		if (splitLine.length!=3) {
-			System.out.println("Invalid command!");
-		}
-		else {
-			foreach(Neighbor nb: bh.neighbor) {
-				if (nb.ip.equals(splitLine[1]) && nb.port.equals(splitLine[2])) {
-					nb.distance = Float.MAX_VALUE;
-				}
-			}
-		}
+		bh.pldown(splitLine);
 	}
 	
-	void processLinkUp(Bfclient_host bh, String[] splitLine) {}
+	void processLinkUp(Bfclient_host bh, String[] splitLine) {
+		bh.plup(splitLine);
+	}
 	
 	void processChangeCost(Bfclient_host bh, String[] splitLine) {
-		if (splitLine.length!=4) {
-			System.out.println("Invalid command!");
-		}
-		else {
-			foreach(Neighbor nb: bh.neighbor) {
-				if (nb.ip.equals(splitLine[1]) && nb.port.equals(splitLine[2])) {
-					nb.distance = Float.parseFloat(splitLine[3]);
-				}
-			}
-		}
+		bh.pcc(splitLine);
 	}
 	
 	void processShowRT(){
@@ -95,5 +82,5 @@ public class Bfclient {
 		System.exit(0);
 	}
 	
-	void processTransfer(){}
+	//void processTransfer(){}
 }

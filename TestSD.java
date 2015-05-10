@@ -16,6 +16,7 @@ public class TestSD implements Runnable {
 		timer.schedule(new DateTask2(host, sendPort), 1000, timeout*1000);
 		String line="";
 		
+		/*
 		try{
 			while(true) {
 				Scanner sc = new Scanner(System.in);
@@ -26,6 +27,25 @@ public class TestSD implements Runnable {
 			}
 		}
 		catch (Exception e) {
+			e.printStackTrace();
+		}
+		*/
+		try {
+			HashMap<String, Path> si = new HashMap<>();
+			si.put("sean",new Path(1));
+			si.put("alfred",new Path(2));
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			ObjectOutputStream outputStream = new ObjectOutputStream(out);
+			outputStream.writeObject(si);
+			outputStream.close();
+
+			byte[] listData = out.toByteArray();
+			while (true) {
+				DatagramPacket dp = new DatagramPacket(listData, listData.length,host.ip,sendPort);
+				host.socket.send(dp);
+			}
+		}
+		catch(Exception e) {
 			e.printStackTrace();
 		}
 	}

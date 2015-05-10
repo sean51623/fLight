@@ -9,6 +9,7 @@ public class TestReceiver {
 			int sendPort = 1106;
 			int receivePort = 1121;
 			DatagramSocket ds = new DatagramSocket(receivePort);
+			System.out.println(InetAddress.getLocalHost());
 		
 			while(true) {
 				System.out.println("hi");
